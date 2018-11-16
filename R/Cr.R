@@ -51,12 +51,12 @@ Cr <- function(traj1, traj2, tc = 0, sim = F){
     tr2 <- ld(trajs[2])
   }
   
-  if (is.null(tr1)) {
+  if (!exists(tr1)) {
     tr1 <- ifelse(class(traj1)[1] == "ltraj", ld(traj1), traj1)
   }
   
   
-  if (is.null(tr2)) {
+  if (!exists(tr2)) {
     tr2 <- ifelse(class(traj1)[1] == "ltraj", ld(traj2), traj2)
   }
   

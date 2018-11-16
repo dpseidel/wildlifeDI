@@ -4,24 +4,29 @@
 \alias{DI}
 \title{Dynamic interaction index}
 \usage{
-DI(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1)
+DI(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1,
+  sim = F)
 }
 \arguments{
-\item{traj1}{an object of the class \code{ltraj} which contains the time-stamped 
-movement fixes of the first object. Note this object must be a \code{type II 
-traj} object. For more information on objects of this type see \code{help(ltraj)}.}
+\item{traj1}{an object of the class \code{ltraj} which contains the time-stamped
+movement fixes of the first object. Note this object must be a \code{type II
+traj} object. For more information on objects of this type see \code{help(ltraj)}.
+OR a dataframe of the same format.}
 
 \item{traj2}{same as \code{traj1}.}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 
-\item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the IAB 
-index for each simultaneous fix should be returned (with a local permutation test), or (if \code{local = FALSE} - the default) 
+\item{local}{logical value indicating whether a dataframe (\code{local = TRUE}) containing the IAB
+index for each simultaneous fix should be returned (with a local permutation test), or (if \code{local = FALSE} - the default)
 the global index along with associated global permutation test.}
 
 \item{rand}{number of permutations to use in the local permutation test.}
 
 \item{alpha}{value for the \eqn{\alpha} parameter in the formula for di\eqn{_d} (default = 1).}
+
+\item{sim}{logical defining whether or not the trajectories given are already simulataneous.
+This allows users to provide already simultaneous trajectories to speed up processing.}
 }
 \value{
 If \code{local=FALSE} (the default) DI returns the numeric value of the DI index (along with DI\eqn{_{theta}}{_theta} and DI\eqn{_d}), and the associated p-value from a permutation test (see \code{IAB}).
@@ -29,14 +34,14 @@ If \code{local=TRUE} DI returns a dataframe that contains the localized \code{di
 }
 \description{
 The function \code{DI} measures dynamic interaction between two moving objects. It
-calculates the local level di statistic for movement displacement, direction, 
+calculates the local level di statistic for movement displacement, direction,
 and overall. DI can compute time- and/or distance-based weighting schemes
 following Long and Nelson (2013).
 }
 \details{
-This function can be used for calculating the dynamic interaction (DI) statistic 
-as described in Long and Nelson (2013). The DI statistic can be used to measure 
-the local level of dynamic interaction between two moving objects. Specifically, 
+This function can be used for calculating the dynamic interaction (DI) statistic
+as described in Long and Nelson (2013). The DI statistic can be used to measure
+the local level of dynamic interaction between two moving objects. Specifically,
 it measures dynamic interaction in movement direction and displacement.
 }
 \examples{

@@ -4,7 +4,7 @@
 \alias{Cr}
 \title{Movement Correlation Coefficient}
 \usage{
-Cr(traj1, traj2, tc = 0)
+Cr(traj1, traj2, tc = 0, sim = F)
 }
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped
@@ -15,6 +15,9 @@ help(ltraj)}.}
 \item{traj2}{same as \code{traj1}.}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
+
+\item{sim}{logical defining whether or not the trajectories given are already simulataneous. 
+This allows users to provide already simultaneous trajectories to speed up processing.}
 }
 \value{
 This function returns the Shirabe (2006) correlation statistic for two moving objects.

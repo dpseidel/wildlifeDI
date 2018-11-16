@@ -19,7 +19,7 @@ is always taken in seconds. If NULL, this adapted function will calculate tolera
 between 0 and 600 seconds. Intended for use with 15 min, 20 min, and 30 min, regular trajectories.}
 }
 \value{
-data frame with
+a list of two dataframe, each subset to the simultaneous timesteps shared between the dyad.
 }
 \description{
 getSim: A faster GetSimultaneous function

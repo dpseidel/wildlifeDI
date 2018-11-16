@@ -26,7 +26,7 @@
 #' @param rand number of permutations to use in the local permutation test.
 #' @param alpha value for the \eqn{\alpha} parameter in the formula for di\eqn{_d} (default = 1).
 #' @param sim logical defining whether or not the trajectories given are already simulataneous.
-#'
+#' This allows users to provide already simultaneous trajectories to speed up processing.
 #' @return
 #' If \code{local=FALSE} (the default) DI returns the numeric value of the DI index (along with DI\eqn{_{theta}}{_theta} and DI\eqn{_d}), and the associated p-value from a permutation test (see \code{IAB}).
 #' If \code{local=TRUE} DI returns a dataframe that contains the localized \code{di} values (see Long and Nelson 2013). The columns for \code{di}, \code{di.theta}, and \code{di.d} represent dynamic interaction overall, in direction (azimuth), and in displacement, respectively for each segment. A localized p-value for a one sided test for positive interaction (and z-score) is computed based on \code{rand} permutations of the segments. The pkey columns can be used to match the simultaneous segments to the original trajectory (see \code{IAB}).

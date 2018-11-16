@@ -19,6 +19,8 @@
 #'    help(ltraj)}.
 #' @param traj2 same as \code{traj1}.
 #' @param tc time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.
+#' @param sim logical defining whether or not the trajectories given are already simulataneous. 
+#' This allows users to provide already simultaneous trajectories to speed up processing.
 #'
 #' @return
 #'   This function returns the Shirabe (2006) correlation statistic for two moving objects.
@@ -40,11 +42,23 @@
 #' @export
 #
 # ---- End of roxygen documentation ----
-Cr <- function(traj1, traj2, tc = 0){
-  trajs <- GetSimultaneous(traj1, traj2, tc)
-  #convert ltraj objects to dataframes
-  tr1 <- ld(trajs[1])[,1:2]
-  tr2 <- ld(trajs[2])[,1:2]
+Cr <- function(traj1, traj2, tc = 0, sim = F){
+  if (!sim) {
+    # convert ltraj objects to dataframes
+    trajs <- GetSimultaneous(traj1, traj2, tc)
+    # convert ltraj objects to dataframes
+    tr1 <- ld(trajs[1])
+    tr2 <- ld(trajs[2])
+  }
+  
+  if (is.null(tr1)) {
+    tr1 <- ifelse(class(traj1)[1] == "ltraj", ld(traj1), traj1)
+  }
+  
+  
+  if (is.null(tr2)) {
+    tr2 <- ifelse(class(traj1)[1] == "ltraj", ld(traj2), traj2)
+  }
   
   n <- nrow(tr1)
   

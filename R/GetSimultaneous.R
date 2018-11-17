@@ -108,19 +108,29 @@ GetSimultaneous <- function(traj1,traj2,tc=0){
 #' @param tc time threshold for determining simultaneous fixes. For simplicity, \code{tc}
 #'    is always taken in seconds. If NULL, this adapted function will calculate tolerane on the fly
 #'    between 0 and 600 seconds. Intended for use with 15 min, 20 min, and 30 min, regular trajectories.
-#' @return a list of two dataframe, each subset to the simultaneous timesteps shared between the dyad.  
+#' @return
+#' A single ltraj object containing two bursts, representing the two original \code{ltraj} 
+#' objects, each containing only those fixes that are deemed simultaneous.
+#' 
+#' @import lubridate
 #' @export
 
 getSim <- function(df1, df2, tc = NULL) {
-  
+
   if (!requireNamespace("lubridate", quietly = TRUE)) {
     stop("The lubridate package must be installed for this function to work. Please install it.",
          call. = FALSE
     )
   }
-  
+
   if (!requireNamespace("dplyr", quietly = TRUE)) {
     stop("The dplyr package must be installed for this function to work. Please install it.",
+         call. = FALSE
+    )
+  }
+  
+  if (!requireNamespace("dplyr", quietly = TRUE)) {
+    stop("The tibble package must be installed for this function to work. Please install it.",
          call. = FALSE
     )
   }
@@ -130,7 +140,7 @@ getSim <- function(df1, df2, tc = NULL) {
   if (is.null(tc)) {
     # median because there irregularities, especially early
     fixes <- sort(c(median(df1$dt, na.rm = T), median(df2$dt, na.rm = T)))
-    tc <- case_when(
+    tc <- dplyr::case_when(
       fixes[1] == fixes[2] ~ 0,
       identical(fixes, c(900, 1800)) ~ 0,
       identical(fixes, c(900, 1200)) ~ 300,
@@ -140,13 +150,14 @@ getSim <- function(df1, df2, tc = NULL) {
   
   # subset to only those sharing the same dates
   # should (in some cases) drastically reduce the datasets and thus memory issues
-  matrix(c(range(df1$date), range(df2$date)), 2, 2)
-  as.POSIXlt(apply(matrix(c(range(df1$date), range(df2$date)), 2, 2), 1, min),
-             origin = "1970-01-01 00:00:00", tz = "UTC"
-  )
+  # matrix(c(range(df1$date), range(df2$date)), 2, 2)
+  # as.POSIXlt(apply(matrix(c(range(df1$date), range(df2$date)), 2, 2), 1, min),
+  #            origin = "1970-01-01 00:00:00", tz = "UTC"
+  # )
+  # 
   
-  int1 <- lubridate::interval(start = min(df1$date), end = max(df1$date))
-  int2 <- lubridate::interval(start = min(df2$date), end = max(df2$date))
+  int1 <- lubridate::interval(start = floor_date(min(df1$date), "day"), end = ceiling_date(max(df1$date), "day"))
+  int2 <- lubridate::interval(start = floor_date(min(df2$date), "day"), end = ceiling_date(max(df2$date), "day"))
   
   if (lubridate::int_overlaps(int1, int2) == FALSE) {
     return(NULL)
@@ -181,14 +192,14 @@ getSim <- function(df1, df2, tc = NULL) {
   
   # early returns to speed things up
   if (tc == 0) {
-    return(list(tr1[which(dt1 <= tc), ], tr2[which(dt2 <= tc), ]))
+    return(c(dl(tr1[which(dt1 <= tc), ]), dl(tr2[which(dt2 <= tc), ])))
   }
   
-  match1 <- tibble(tr1 = id1, tr2 = diff1, dt = dt1)[which(dt1 <= tc), ]
-  match2 <- tibble(tr1 = diff2, tr2 = id2, dt = dt2)[which(dt2 <= tc), ]
+  match1 <- tibble::tibble(tr1 = id1, tr2 = diff1, dt = dt1)[which(dt1 <= tc), ]
+  match2 <- tibble::tibble(tr1 = diff2, tr2 = id2, dt = dt2)[which(dt2 <= tc), ]
   
   if (nrow(match1) == nrow(match2)) {
-    return(list(tr1[which(dt1 <= tc), ], tr2[which(dt2 <= tc), ]))
+    return(c(dl(tr1[which(dt1 <= tc), ]), dl(tr2[which(dt2 <= tc), ])))
   }
   
   # the following still require more copying than i would like...
@@ -216,10 +227,10 @@ getSim <- function(df1, df2, tc = NULL) {
     match2 <- match2[-ind.2, ]
   }
   
-  tr1.sim <- tr1[match1$tr1, c(1:3, 11)] # dropping ltraj cols as they could be wrong for new subset.
-  tr2.sim <- tr2[match1$tr2, c(1:3, 11)]
+  # converting back to ltraj is necessary for proper angles (according to my tests)
+  tr1.sim <- dl(tr1[match1$tr1, c(1:3, 11)]) # dropping ltraj cols as they could be wrong for new subset.
+  tr2.sim <- dl(tr2[match1$tr2, c(1:3, 11)])
   
-  
-  return(list(tr1.sim, tr2.sim))
+  return(c(tr1.sim, tr2.sim))
 }
 

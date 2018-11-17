@@ -10,8 +10,7 @@ DI(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1,
 \arguments{
 \item{traj1}{an object of the class \code{ltraj} which contains the time-stamped
 movement fixes of the first object. Note this object must be a \code{type II
-traj} object. For more information on objects of this type see \code{help(ltraj)}.
-OR a dataframe of the same format.}
+traj} object. For more information on objects of this type see \code{help(ltraj)}.}
 
 \item{traj2}{same as \code{traj1}.}
 
@@ -26,7 +25,8 @@ the global index along with associated global permutation test.}
 \item{alpha}{value for the \eqn{\alpha} parameter in the formula for di\eqn{_d} (default = 1).}
 
 \item{sim}{logical defining whether or not the trajectories given are already simulataneous.
-This allows users to provide already simultaneous trajectories to speed up processing.}
+This allows users to provide already simultaneous trajectories to speed up processing. If sim = T, 
+traj1 and traj2 may be provided as dataframes.}
 }
 \value{
 If \code{local=FALSE} (the default) DI returns the numeric value of the DI index (along with DI\eqn{_{theta}}{_theta} and DI\eqn{_d}), and the associated p-value from a permutation test (see \code{IAB}).

@@ -16,15 +16,16 @@ help(ltraj)}.}
 
 \item{tc}{time threshold for determining simultaneous fixes -- see function: \code{GetSimultaneous}.}
 
-\item{sim}{logical defining whether or not the trajectories given are already simulataneous. 
-This allows users to provide already simultaneous trajectories to speed up processing.}
+\item{sim}{logical defining whether or not the trajectories given are already simulataneous.
+This allows users to provide already simultaneous trajectories to speed up processing. If sim = T,
+traj1 and traj2 may be provided as dataframes.}
 }
 \value{
 This function returns the Shirabe (2006) correlation statistic for two moving objects.
 }
 \description{
-The function \code{Cr} computes the correlation statistic for movement data as presented 
-  in the paper by Shirabe (2006). The statistic is essentially a Pearson product-moment 
+The function \code{Cr} computes the correlation statistic for movement data as presented
+  in the paper by Shirabe (2006). The statistic is essentially a Pearson product-moment
   correlation statistic formulated for use with movement data.
 }
 \details{

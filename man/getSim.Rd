@@ -19,7 +19,8 @@ is always taken in seconds. If NULL, this adapted function will calculate tolera
 between 0 and 600 seconds. Intended for use with 15 min, 20 min, and 30 min, regular trajectories.}
 }
 \value{
-a list of two dataframe, each subset to the simultaneous timesteps shared between the dyad.
+A single ltraj object containing two bursts, representing the two original \code{ltraj} 
+objects, each containing only those fixes that are deemed simultaneous.
 }
 \description{
 getSim: A faster GetSimultaneous function

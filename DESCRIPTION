@@ -14,13 +14,17 @@ License: GPL-3
 VignetteBuilder: knitr
 Suggests:
     knitr,
-    adehabitatHR, 
-    lubridate,
+    adehabitatHR,
+    testthat,
+    purrr, 
+    tibble, 
     dplyr
 Imports:
     sp,
     rgeos,
     adehabitatLT,
     stats,
-    graphics
+    graphics, 
+    lubridate
 RoxygenNote: 6.1.0
+Encoding: UTF-8

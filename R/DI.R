@@ -73,9 +73,6 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
     }
   }
 
-  pkey1 <- tr1$pkey
-  pkey2 <- tr2$pkey
-
   # Interaction in azimuth function
   f.theta <- function(a, b) {
     di.t <- cos(a - b)
@@ -99,6 +96,12 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
   }
 
   n <- nrow(tr1) # number of fixes
+  # save some things for later... 
+  pkey1 <- tr1$pkey
+  pkey2 <- tr2$pkey
+  ndate <- tr1$date[n]
+  
+  # calc theta, disp
   tr1 <- tr1[1:(n - 1), ]
   tr2 <- tr2[1:(n - 1), ]
   theta <- mapply(f.theta, tr1$abs.angle, tr2$abs.angle)
@@ -180,7 +183,7 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
     # will return a dataframe 1 row short.
     outdf <- data.frame(date = tr1$date, di.theta = theta, di.d = disp, di = di.total, di.p = di.p, di.z = di.z)
     outdf <- rbind(outdf, rep(NA, 6))
-    outdf[n, 1] <- ld(trajs[1])$date[n]
+    outdf[n, 1] <- ndate
     outdf$pkey1 <- pkey1
     outdf$pkey2 <- pkey2
     return(outdf)

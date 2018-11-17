@@ -25,7 +25,7 @@ the global index along with associated global permutation test.}
 \item{alpha}{value for the \eqn{\alpha} parameter in the formula for di\eqn{_d} (default = 1).}
 
 \item{sim}{logical defining whether or not the trajectories given are already simulataneous.
-This allows users to provide already simultaneous trajectories to speed up processing. If sim = T, 
+This allows users to provide already simultaneous trajectories to speed up processing. If sim = T,
 traj1 and traj2 may be provided as dataframes.}
 }
 \value{

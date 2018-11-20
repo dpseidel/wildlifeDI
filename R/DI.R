@@ -76,22 +76,29 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
   # Interaction in azimuth function
   f.theta <- function(a, b) {
     di.t <- cos(a - b)
-    if (is.na(di.t) == T) {
-      if (is.na(a) == T & is.na(b) == T) {
-        di.t <- 1
-      } else {
-        di.t <- 0
-      }
+    
+    if (any(is.na(di.t))) {
+      
+      for (i in which(is.na(di.t))) {
+        
+        if (is.na(a[i]) == T & is.na(b[i]) == T) {
+          di.t[i] <- 1
+        } else {
+          di.t[i] <- 0
+        }
+        
+      } 
     }
+    
     return(di.t)
   }
 
   # interaction in displacement function
   f.disp <- function(a, b, alpha) {
     di.d <- 1 - (abs(a - b) / (a + b))^alpha
-    if (is.na(di.d) == TRUE) {
-      di.d <- 1
-    }
+    
+    di.d[is.na(di.d)] <- 1
+    
     return(di.d)
   }
 
@@ -104,8 +111,8 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
   # calc theta, disp
   tr1 <- tr1[1:(n - 1), ]
   tr2 <- tr2[1:(n - 1), ]
-  theta <- mapply(f.theta, tr1$abs.angle, tr2$abs.angle)
-  disp <- mapply(f.disp, tr1$dist, tr2$dist, alpha)
+  theta <- f.theta(tr1$abs.angle, tr2$abs.angle)
+  disp <- f.disp(tr1$dist, tr2$dist, alpha)
 
   # compute overall interaction
   di.total <- theta * disp
@@ -122,8 +129,8 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
     DI. <- numeric(n-1)
     for (k in 1:(n - 1)) {
       tr2. <- tr2[c((k + 1):n, 1:k), c("abs.angle", "dist")]
-      theta <- mapply(f.theta, tr1$abs.angle, tr2.$abs.angle)
-      disp <- mapply(f.disp, tr1$dist, tr2.$dist, alpha)
+      theta <- f.theta(tr1$abs.angle, tr2.$abs.angle)
+      disp <- f.disp(tr1$dist, tr2.$dist, alpha)
       di <- theta * disp
       DI.[k] <- mean(di, na.rm = TRUE)
     }

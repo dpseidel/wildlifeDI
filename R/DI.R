@@ -117,18 +117,15 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
 
     # Significance Testing
     #-------------------------
-    theta. <- NULL
-    disp. <- NULL
-    DI. <- NULL
     n <- nrow(tr1)
+    # never grow a vector -- way way way less efficient
+    DI. <- numeric(n-1)
     for (k in 1:(n - 1)) {
-      tr2. <- rbind(tr2[(k + 1):n, c("abs.angle", "dist") ], tr2[1:k, c("abs.angle", "dist") ])
+      tr2. <- tr2[c((k + 1):n, 1:k), c("abs.angle", "dist")]
       theta <- mapply(f.theta, tr1$abs.angle, tr2.$abs.angle)
       disp <- mapply(f.disp, tr1$dist, tr2.$dist, alpha)
       di <- theta * disp
-      # theta. <- c(theta.,mean(theta,na.rm=TRUE))
-      # disp. <- c(disp., mean(disp,na.rm=TRUE))
-      DI. <- c(DI., mean(di, na.rm = TRUE))
+      DI.[k] <- mean(di, na.rm = TRUE)
     }
     ng <- length(which(DI. > DI.TOT))
     nb <- length(which(DI. < DI.TOT))

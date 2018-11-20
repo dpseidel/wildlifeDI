@@ -7,6 +7,12 @@ df1 <- ld(traj1)
 df2 <- ld(traj2)
 sim <- getSim(df1, df2, tc = 0)
 
+test_that("my changes don't break anything", {
+  test <- c(0.196842623, 0.199638251, 0.595586927, 0.002890173, 1.000000000)
+  expect_equal(unname(unlist(DI(traj1, traj2))), test)
+})
+
+
 test_that("DI works with ltrajs and dataframes", {
   expect_equal(DI(traj1, traj2), DI(sim[1], sim[2], sim = T))
   

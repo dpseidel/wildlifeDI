@@ -122,7 +122,7 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
     DI. <- NULL
     n <- nrow(tr1)
     for (k in 1:(n - 1)) {
-      tr2. <- rbind(tr2[(k + 1):n, ], tr2[1:k, ])
+      tr2. <- rbind(tr2[(k + 1):n, c("abs.angle", "dist") ], tr2[1:k, c("abs.angle", "dist") ])
       theta <- mapply(f.theta, tr1$abs.angle, tr2.$abs.angle)
       disp <- mapply(f.disp, tr1$dist, tr2.$dist, alpha)
       di <- theta * disp
@@ -150,8 +150,8 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
       rand <- rr
     }
     df.rand <- df.rand[sample(1:rr, rand), ]
-    perm1 <- tr1[df.rand$i, ]
-    perm2 <- tr2[df.rand$j, ]
+    perm1 <- tr1[df.rand$i, c("abs.angle", "dist")]
+    perm2 <- tr2[df.rand$j, c("abs.angle", "dist")]
 
     # These are the distributions for testing based on the 'rand' number of permutations
     theta. <- mapply(f.theta, perm1$abs.angle, perm2$abs.angle)

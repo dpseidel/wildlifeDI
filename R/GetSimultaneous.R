@@ -228,8 +228,8 @@ getSim <- function(df1, df2, tc = NULL) {
   }
   
   # converting back to ltraj is necessary for proper angles (according to my tests)
-  tr1.sim <- dl(tr1[match1$tr1, c(1:3, 11)]) # dropping ltraj cols as they could be wrong for new subset.
-  tr2.sim <- dl(tr2[match1$tr2, c(1:3, 11)])
+  tr1.sim <- dl(tr1[match1$tr1,])
+  tr2.sim <- dl(tr2[match1$tr2,])
   
   return(c(tr1.sim, tr2.sim))
 }

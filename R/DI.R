@@ -76,38 +76,35 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
   # Interaction in azimuth function
   f.theta <- function(a, b) {
     di.t <- cos(a - b)
-    
+
     if (any(is.na(di.t))) {
-      
       for (i in which(is.na(di.t))) {
-        
         if (is.na(a[i]) == T & is.na(b[i]) == T) {
           di.t[i] <- 1
         } else {
           di.t[i] <- 0
         }
-        
-      } 
+      }
     }
-    
+
     return(di.t)
   }
 
   # interaction in displacement function
   f.disp <- function(a, b, alpha) {
     di.d <- 1 - (abs(a - b) / (a + b))^alpha
-    
+
     di.d[is.na(di.d)] <- 1
-    
+
     return(di.d)
   }
 
   n <- nrow(tr1) # number of fixes
-  # save some things for later... 
+  # save some things for later...
   pkey1 <- tr1$pkey
   pkey2 <- tr2$pkey
   ndate <- tr1$date[n]
-  
+
   # calc theta, disp
   tr1 <- tr1[1:(n - 1), ]
   tr2 <- tr2[1:(n - 1), ]
@@ -126,7 +123,7 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
     #-------------------------
     n <- nrow(tr1)
     # never grow a vector -- way way way less efficient
-    DI. <- numeric(n-1)
+    DI. <- numeric(n - 1)
     for (k in 1:(n - 1)) {
       tr2. <- tr2[c((k + 1):n, 1:k), c("abs.angle", "dist")]
       theta <- f.theta(tr1$abs.angle, tr2.$abs.angle)
@@ -141,25 +138,36 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
     #-------------------------
     return(list(DI = DI.TOT, DI.theta = DI.theta, DI.d = DI.disp, P.positive = P.positive, P.negative = P.negative))
   } else {
-    # Compute the permutations
+
+    # this is memory exhaustive. instead sample without replication rr times.
+    # # Compute the permutations
     i <- 1:(n - 1) # n-1 segments
-    df.rand <- expand.grid(i, i)
-    names(df.rand) <- c("i", "j")
-    df.rand <- df.rand[which(df.rand$i != df.rand$j), ] # remove the segments with no shift!
+    # df.rand <- expand.grid(i, i)  # this can exhaust vector memory with long trajectories
+    # names(df.rand) <- c("i", "j")
+    # df.rand <- df.rand[which(df.rand$i != df.rand$j), ] # remove the segments with no shift!
 
     # check here to make sure requested number of permutations is not greater than actual number available
-    rr <- dim(df.rand)[1] # should be (n-1)^2 - (n-1)
+    rr <- (n - 1)^2 - (n - 1)
     if (rand > rr) {
       print(paste(rand, " permutations were requested, but only ", rr, " are possible; rand changed to ", rr, sep = ""))
       rand <- rr
     }
-    df.rand <- df.rand[sample(1:rr, rand), ]
-    perm1 <- tr1[df.rand$i, c("abs.angle", "dist")]
-    perm2 <- tr2[df.rand$j, c("abs.angle", "dist")]
+
+    df.rand <- unique(data.frame(t(replicate(rand, sample(i, 2, replace = F)))))
+
+    if (nrow(df.rand) != rand) {
+      message(paste(
+        nrow(df.rand),
+        "unique permutations were used to prepare testing distributions."
+      ))
+    }
+
+    perm1 <- tr1[df.rand[, 1], c("abs.angle", "dist")]
+    perm2 <- tr2[df.rand[, 2], c("abs.angle", "dist")]
 
     # These are the distributions for testing based on the 'rand' number of permutations
-    theta. <- mapply(f.theta, perm1$abs.angle, perm2$abs.angle)
-    disp. <- mapply(f.disp, perm1$dist, perm2$dist, alpha)
+    theta. <- f.theta(perm1$abs.angle, perm2$abs.angle)
+    disp. <- f.disp(perm1$dist, perm2$dist, alpha)
     di. <- theta. * disp.
 
     # function to compute permutation p-value
@@ -171,7 +179,7 @@ DI <- function(traj1, traj2, tc = 0, local = FALSE, rand = 99, alpha = 1, sim = 
       p.below <- (nb + 1) / k
       return(p.above)
     }
-    # function ot compute permutation z-score
+    # function to compute permutation z-score
     perm.z <- function(di, di.) {
       u <- mean(di.)
       s <- sd(di.)
